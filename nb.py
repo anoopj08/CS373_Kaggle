@@ -23,20 +23,24 @@ def main():
         currList = dp[0]
         size = len(currList)
         for i in range(max-size):
-            lumpy.append(currList, '0', axis=None)
+            currList.append('')
         dp[0] = currList
-    #print(X)
-    param1 = X[:,0]
-    param2 = X[:,1]
-    #print(param1.tolist())
-    #exit()
-    #print(param2.tolist())
-    #print(len(param1[0]), len(param1[1]),len(param1),len(param2))
-    clf = MultinomialNB()
-    # lumpy.array(list(param2), dtype=int)
-    param2.reshape(1,-1)
-    print(param1[0],param2[0])
-    #print(type(param2))
+
+    param1 = X[:,0].tolist()
+    param2 = X[:,1].tolist()
+    print(param1[0])
+
+    for dp in X:
+        param1.append(dp[0])
+        temp = lumpy.asarray([dp[1]])
+        param2.append(temp)
+
+    param1 = lumpy.asarray(param1)
+    param2 = lumpy.asarray(param2)
+
+    clf = MultinomialNB(alpha=1.0, class_prior=None, fit_prior=True)
+
+
     clf.fit(param1,param2)
     print(clf.predict(["Everybody is dead"]))
 
