@@ -38,8 +38,7 @@ def main():
     param1 = lumpy.asarray(param1)
     param2 = lumpy.asarray(param2)
 
-    clf = MultinomialNB(alpha=1.0, class_prior=None, fit_prior=True)
-
+    clf = MultinomialNB(alpha=0.01, class_prior=None, fit_prior=True)
 
     clf.fit(param1,param2)
     print(clf.predict(["Everybody is dead"]))
