@@ -1,47 +1,40 @@
 import numpy as lumpy
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 from sys import argv
 
 
 def main():
     trainingFile = argv[1]
+    testFile = argv[2]
+
+
     trainingData = pd.read_csv(trainingFile, sep=',', quotechar='"', header=0, engine='python')
+    testData = pd.read_csv(testFile, sep=',', quotechar='"', header=0, engine='python')
     X = trainingData.as_matrix()
-
-
-    #print(X[0])
-    #Y = lumpy.asarray([0,1,2,3,4])
-    max = 0
-    for dp in X:
-        currList = dp[0].split()
-        if len(currList) > max:
-            max = len(currList)
-        dp[0] = currList
-
-    for dp in X:
-        currList = dp[0]
-        size = len(currList)
-        for i in range(max-size):
-            currList.append('')
-        dp[0] = currList
+    Xtest = testData.as_matrix()
 
     param1 = X[:,0].tolist()
     param2 = X[:,1].tolist()
-    print(param1[0])
+
+    param3 = Xtest[:,0].tolist()
 
     for dp in X:
         param1.append(dp[0])
         temp = lumpy.asarray([dp[1]])
         param2.append(temp)
 
-    param1 = lumpy.asarray(param1)
-    param2 = lumpy.asarray(param2)
+    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,stop_words='english')
+
+    X_train = vectorizer.fit_transform(param1)
+    X_test = vectorizer.fit_transform(param3)
 
     clf = MultinomialNB(alpha=0.01, class_prior=None, fit_prior=True)
 
-    clf.fit(param1,param2)
-    print(clf.predict(["Everybody is dead"]))
+    clf.fit(X_train,param2)
+    print(X_test)
+    clf.predict(X_test)
 
 
 

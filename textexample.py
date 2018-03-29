@@ -111,8 +111,6 @@ data_test = fetch_20newsgroups(subset='test', categories=categories,
                                remove=remove)
 print('data loaded')
 
-
-
 # order of labels in `target_names` can be different from `categories`
 target_names = data_train.target_names
 
@@ -137,11 +135,15 @@ t0 = time()
 if opts.use_hashing:
     vectorizer = HashingVectorizer(stop_words='english', alternate_sign=False,
                                    n_features=opts.n_features)
+
     X_train = vectorizer.transform(data_train.data)
+    print("1")
 else:
     vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
                                  stop_words='english')
     X_train = vectorizer.fit_transform(data_train.data)
+    print("2")
+    print(type(data_train.data))
 duration = time() - t0
 print("done in %fs at %0.3fMB/s" % (duration, data_train_size_mb / duration))
 print("n_samples: %d, n_features: %d" % X_train.shape)
@@ -195,6 +197,7 @@ def benchmark(clf):
     train_time = time() - t0
     print("train time: %0.3fs" % train_time)
 
+    print(data_test.data)
     t0 = time()
     pred = clf.predict(X_test)
     test_time = time() - t0
@@ -264,7 +267,10 @@ results.append(benchmark(NearestCentroid()))
 # Train sparse Naive Bayes classifiers
 print('=' * 80)
 print("Naive Bayes")
+
+print("THIS ONEEEEEEE")
 results.append(benchmark(MultinomialNB(alpha=.01)))
+exit()
 results.append(benchmark(BernoulliNB(alpha=.01)))
 
 print('=' * 80)
