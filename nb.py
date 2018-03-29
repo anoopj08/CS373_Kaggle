@@ -3,7 +3,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 from sys import argv
-
+import csv
 
 def main():
     trainingFile = argv[1]
@@ -33,8 +33,18 @@ def main():
     clf = MultinomialNB(alpha=0.01, class_prior=None, fit_prior=True)
 
     clf.fit(X_train,param2)
-    print(X_test)
+    #print(X_test)
     results = clf.predict(X_test)
+    print(results)
+
+    with open('submission.csv', 'wb') as csvfile:
+        spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow(['id','sentiment'])
+        count = 0
+        for row in results:
+            spamwriter.writerow([count,results[count]])
+            count += 1
+
 
 if __name__ == '__main__':
     main()

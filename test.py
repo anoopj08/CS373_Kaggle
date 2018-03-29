@@ -1,9 +1,6 @@
-import numpy as np
-X = np.random.randint(5, size=(6, 100))
-print(X)
-y = np.array([1, 2, 3, 4, 5, 6])
-from sklearn.naive_bayes import MultinomialNB
-clf = MultinomialNB()
-clf.fit(X, y)
-MultinomialNB(alpha=1.0, class_prior=None, fit_prior=True)
-print(clf.predict(X[2:3]))
+import csv
+with open('eggs.csv', 'wb') as csvfile:
+    spamwriter = csv.writer(csvfile, delimiter=',',
+                            quotechar='\"', quoting=csv.QUOTE_MINIMAL)
+    spamwriter.writerow(['Spam'] * 5 + ['Baked Beans'])
+    spamwriter.writerow(['Spam', 'Lovely Spam', 'Wonderful Spam'])
