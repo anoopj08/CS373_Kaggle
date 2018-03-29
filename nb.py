@@ -28,16 +28,13 @@ def main():
     vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,stop_words='english')
 
     X_train = vectorizer.fit_transform(param1)
-    X_test = vectorizer.fit_transform(param3)
+    X_test = vectorizer.transform(param3)
 
     clf = MultinomialNB(alpha=0.01, class_prior=None, fit_prior=True)
 
     clf.fit(X_train,param2)
     print(X_test)
-    clf.predict(X_test)
-
-
-
+    results = clf.predict(X_test)
 
 if __name__ == '__main__':
     main()
