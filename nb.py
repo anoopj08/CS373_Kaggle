@@ -28,7 +28,7 @@ def main():
     X = X[:trainIndex]
 
     valIndex = int((trainPercentage/100) * float(len(Xval))) + trainIndex
-    Xval = Xval[trainIndex:valIndex]
+    #   Xval = Xval[:valIndex]       #  ADD THIS LINE BACK TO ENABLE VALIDATION SET
 
     Xtest = testData.as_matrix()
 
@@ -40,19 +40,12 @@ def main():
     param5 = Xval[:,1].tolist()
 
     for dp in X:
-        # temp = dp[0].split()
-        # temp2 = []
-        # for word in temp:
-        #     temp2.append([word])
-        # param1.append(temp2)
-        # temp = lumpy.asarray([dp[1]])
-        # param2.append(temp)
         param1.append(dp[0])
         temp = lumpy.asarray([dp[1]])
         param2.append(temp)
 
 
-    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,stop_words='english',ngram_range = (0,1))
+    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=1.0,stop_words='english',ngram_range = (0,2))
 
     X_train = vectorizer.fit_transform(param1)
     X_test = vectorizer.transform(param3)
@@ -69,7 +62,10 @@ def main():
     tot = len(valResults)
     for res in range(len(valResults)):
         if valResults[res] == Xval_test[res]:
+            #print(valResults[res],"!")
             count += 1
+        else:
+            print(valResults[res],Xval_test[res],param4[res])
     print(float(count)/float(tot))
 
     results = clf.predict(X_test)
