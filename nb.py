@@ -45,7 +45,8 @@ def main():
         param2.append(temp)
 
 
-    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=1.0,stop_words='english',ngram_range = (0,2))
+
+    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=1.0,stop_words='english',ngram_range = (0,3))
 
     X_train = vectorizer.fit_transform(param1)
     X_test = vectorizer.transform(param3)
@@ -53,7 +54,7 @@ def main():
     Xval_predict = vectorizer.transform(param4)
     Xval_test = param5
 
-    clf = MultinomialNB(alpha=0.1, class_prior=None, fit_prior=True)
+    clf = MultinomialNB(alpha=0.49, class_prior=None, fit_prior=True)
 
     clf.fit(X_train,param2)
 
@@ -62,14 +63,11 @@ def main():
     tot = len(valResults)
     for res in range(len(valResults)):
         if valResults[res] == Xval_test[res]:
-            #print(valResults[res],"!")
             count += 1
-        else:
-            print(valResults[res],Xval_test[res],param4[res])
+
     print(float(count)/float(tot))
 
     results = clf.predict(X_test)
-    #print(results)
 
     with open('submission.csv', 'wb') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
