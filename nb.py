@@ -1,5 +1,7 @@
 import numpy as lumpy
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import BernoulliNB
+from sklearn import svm
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 from sys import argv
@@ -23,7 +25,7 @@ def main():
     validPercentage = float(argv[4])
 
     if int(trainPercentage) + int(validPercentage) > 100:
-        print("Percentages add up to more than 100. Try again you fucker.")
+        print("Percentages add up to more than 100. Please try again.")
         exit()
 
     trainingData = pd.read_csv(trainingFile, sep=',', quotechar='"', header=0, engine='python')
@@ -66,6 +68,7 @@ def main():
     Xval_test = param5
 
     clf = MultinomialNB(alpha=0.49, class_prior=None, fit_prior=True)
+    # clf = BernoulliNB(alpha= 0.01, class_prior=None, fit_prior=True)
 
     clf.fit(X_train,param2)
 
