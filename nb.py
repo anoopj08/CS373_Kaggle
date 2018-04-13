@@ -4,6 +4,17 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 from sys import argv
 import csv
+import nltk
+#nltk.download('all')
+from nltk.stem import PorterStemmer
+
+
+def proproc(w):
+    w = w.lower()
+    porter = PorterStemmer()
+    w = porter.stem(w)
+    #print(w)
+    return w
 
 def main():
     trainingFile = argv[1]
@@ -28,7 +39,7 @@ def main():
     X = X[:trainIndex]
 
     valIndex = int((trainPercentage/100) * float(len(Xval))) + trainIndex
-    #   Xval = Xval[:valIndex]       #  ADD THIS LINE BACK TO ENABLE VALIDATION SET
+    Xval = Xval[:valIndex]       #  ADD THIS LINE BACK TO ENABLE VALIDATION SET
 
     Xtest = testData.as_matrix()
 
@@ -46,7 +57,7 @@ def main():
 
 
 
-    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=1.0,stop_words='english',ngram_range = (0,3))
+    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=1.0,stop_words='english',ngram_range = (1,4), strip_accents='unicode',preprocessor=proproc)
 
     X_train = vectorizer.fit_transform(param1)
     X_test = vectorizer.transform(param3)
@@ -69,7 +80,7 @@ def main():
 
     results = clf.predict(X_test)
 
-    with open('submission.csv', 'wb') as csvfile:
+    with open('submission.csv', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['id','sentiment'])
         count = 0
