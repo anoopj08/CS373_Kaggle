@@ -9,6 +9,7 @@ import csv
 import nltk
 from nltk.stem import PorterStemmer
 
+
 def proproc(w):
     w = w.lower()
     porter = PorterStemmer()
@@ -63,20 +64,19 @@ def main():
     Xval_predict = vectorizer.transform(param4)
     Xval_test = param5
 
-    clf = MultinomialNB(alpha=0.6001, class_prior=None, fit_prior=True)
+    classifier_rbf = svm.LinearSVC()
+    classifier_rbf.fit(X_train, param2)
+    prediction_rbf = classifier_rbf.predict(Xval_predict)
 
-    clf.fit(X_train,param2)
-
-    valResults = clf.predict(Xval_predict)
     count = 0
-    tot = len(valResults)
-    for res in range(len(valResults)):
-        if valResults[res] == Xval_test[res]:
+    tot = len(prediction_rbf)
+    for res in range(tot):
+        if prediction_rbf[res] == Xval_test[res]:
             count += 1
 
     print(float(count)/float(tot))
 
-    results = clf.predict(X_test)
+    results = classifier_rbf.predict(X_test)
     with open('submission.csv', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['id','sentiment'])
