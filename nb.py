@@ -64,19 +64,49 @@ def main():
     Xval_test = param5
 
     clf = MultinomialNB(alpha=0.6001, class_prior=None, fit_prior=True)
+    clf2 = BernoulliNB(alpha=0.1, class_prior=None, fit_prior=True)
+    classifier_rbf = svm.LinearSVC()
 
+    classifier_rbf.fit(X_train, param2)
     clf.fit(X_train,param2)
+    clf2.fit(X_train,param2)
 
     valResults = clf.predict(Xval_predict)
+    valResults2 = clf2.predict(Xval_predict)
+    prediction_rbf = classifier_rbf.predict(Xval_predict)
     count = 0
+    count2 = 0
+    count3 = 0
     tot = len(valResults)
     for res in range(len(valResults)):
         if valResults[res] == Xval_test[res]:
             count += 1
+        if valResults2[res] == Xval_test[res]:
+            count2 += 1
+        if prediction_rbf[res] == Xval_test[res]:
+            count3 += 1
 
     print(float(count)/float(tot))
+    print(float(count2)/float(tot))
+    print(float(count3)/float(tot))  
 
+    count = 0
+    for res in range(len(valResults)):
+        if valResults[res] != prediction_rbf[res]:
+            count += 1
+            valResults[res] = valResults2[res]
+    print(float(count)/float(tot))
+    count = 0
+    for res in range(len(valResults)):
+        if valResults[res] == Xval_test[res]:
+            count += 1
+    print(float(count)/float(tot))
     results = clf.predict(X_test)
+    results2 = clf2.predict(X_test)
+
+    
+
+
     with open('submission.csv', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['id','sentiment'])
