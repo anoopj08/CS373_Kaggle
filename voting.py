@@ -3,6 +3,9 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn import svm
+from nltk.corpus import subjectivity
+from nltk.sentiment import SentimentAnalyzer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 import pandas as pd
 from sys import argv
@@ -10,9 +13,27 @@ import csv
 import nltk
 from nltk.stem import PorterStemmer
 
+from textblob import TextBlob
+
 
 def proproc(w):
+    sid = SentimentIntensityAnalyzer()
     w = w.lower()
+    words = w.split()
+
+    for i in range(len(words)):
+        if i != len(words)-1:
+            bigram = words[i]
+            bigram += " " + words[i+1]
+            words.append(bigram)
+
+    for word in words:
+        ss = sid.polarity_scores(w)
+        senti = TextBlob(w)
+
+        #print(senti.sentiment)
+        #print(ss)
+
     porter = PorterStemmer()
     w = porter.stem(w)
     return w
