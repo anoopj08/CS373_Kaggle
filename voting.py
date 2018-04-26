@@ -144,29 +144,30 @@ def main():
     print("Number of Differences: {}".format(numDiff))
 
 
-    with open('submission_avg.csv', 'w') as csvfile:
-        spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        spamwriter.writerow(['id','sentiment'])
-        count = 0
-        for row in finalResults:
-            spamwriter.writerow([count,finalResults[count]])
-            count += 1
+    if isValidation == 0:
+        with open('submission_avg.csv', 'w') as csvfile:
+            spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            spamwriter.writerow(['id','sentiment'])
+            count = 0
+            for row in finalResults:
+                spamwriter.writerow([count,finalResults[count]])
+                count += 1
 
-    with open('submission_mnb.csv', 'w') as csvfile:
-        spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        spamwriter.writerow(['id','sentiment'])
-        count = 0
-        for row in finalResults:
-            spamwriter.writerow([count,valResults[count]])
-            count += 1
+        with open('submission_mnb.csv', 'w') as csvfile:
+            spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            spamwriter.writerow(['id','sentiment'])
+            count = 0
+            for row in finalResults:
+                spamwriter.writerow([count,valResults[count]])
+                count += 1
 
-    with open('submission_svc.csv', 'w') as csvfile:
-        spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        spamwriter.writerow(['id','sentiment'])
-        count = 0
-        for row in finalResults:
-            spamwriter.writerow([count,valResults_svc[count]])
-            count += 1
+        with open('submission_svc.csv', 'w') as csvfile:
+            spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            spamwriter.writerow(['id','sentiment'])
+            count = 0
+            for row in finalResults:
+                spamwriter.writerow([count,valResults_svc[count]])
+                count += 1
 
 
 if __name__ == '__main__':
