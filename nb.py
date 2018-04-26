@@ -79,7 +79,7 @@ def main():
 
     results = clf.predict(X_test)
 
-    with open('submission.csv', 'w') as csvfile:
+    with open('submission_nb.csv', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['id','sentiment'])
         count = 0
