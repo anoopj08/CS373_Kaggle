@@ -83,7 +83,7 @@ def main():
 
 
 
-    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=1.0,stop_words='english',ngram_range = (1,4), strip_accents='unicode',preprocessor=proproc)
+    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.1,stop_words='english',ngram_range = (1,4), strip_accents='unicode',preprocessor=proproc, norm = 'l2')
 
     X_train = vectorizer.fit_transform(param1)
     X_test = vectorizer.transform(param3)
@@ -106,7 +106,7 @@ def main():
     svc.fit(X_train, param2)
     valResults_svc = svc.predict(X_test)
 
-    vc = VotingClassifier(estimators=[('mnb',clf),('rf',rf),('svc',svc)],voting='hard', weights = [2,1,3])
+    vc = VotingClassifier(estimators=[('mnb',clf),('rf',rf),('svc',svc)],voting='hard', weights = [1,1,1])
     vc.fit(X_train,param2)
     valResults_vc = vc.predict(X_test)
 
