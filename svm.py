@@ -56,7 +56,7 @@ def main():
         temp = lumpy.asarray([dp[1]])
         param2.append(temp)
 
-    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=1.0,stop_words='english',ngram_range = (1,4), strip_accents='unicode',preprocessor=proproc)
+    vectorizer = TfidfVectorizer(use_idf = True,norm = 'l2',sublinear_tf=True, max_df=0.5,stop_words='english',ngram_range = (1,2), strip_accents='unicode',preprocessor=proproc)
 
     X_train = vectorizer.fit_transform(param1)
     X_test = vectorizer.transform(param3)
@@ -64,7 +64,7 @@ def main():
     Xval_predict = vectorizer.transform(param4)
     Xval_test = param5
 
-    classifier_rbf = svm.LinearSVC()
+    classifier_rbf = svm.LinearSVC(loss = 'squared_hinge', max_iter = 500, tol = 1e-07)
     classifier_rbf.fit(X_train, param2)
     prediction_rbf = classifier_rbf.predict(Xval_predict)
 
