@@ -6,15 +6,48 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 from sys import argv
 import csv
-import nltk
 from nltk.stem import PorterStemmer
+from nltk.corpus import subjectivity
+from nltk.sentiment import SentimentAnalyzer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+#from textblob import TextBlob
+import itertools
 
 
 def proproc(w):
+    sid = SentimentIntensityAnalyzer()
     w = w.lower()
     porter = PorterStemmer()
     w = porter.stem(w)
+
     #print(w)
+    retSentence = ""
+    retSentiment = 0
+
+    wList = w.split()
+    wLen = len(wList)
+    allComb = []
+    for i in range(1,4):
+        tempList = list(itertools.combinations(wList,i))
+        for t in tempList:
+            allComb.append(t)
+
+    for fragment in allComb:
+        sent = ' '.join(word for word in fragment)
+        ss = sid.polarity_scores(sent)
+        currSentiment = abs(ss['compound'])
+        #print(sent,currSentiment)
+        if currSentiment > retSentiment and len(sent) > len(retSentence):
+            retSentiment = currSentiment
+            retSentence = sent
+
+    #print(retSentiment,retSentence)
+    #exit()
+
+    if retSentiment == 0:
+        return w
+    else:
+        return retSentence
     return w
 
 def main():
@@ -77,7 +110,7 @@ def main():
     print(float(count)/float(tot))
 
     results = classifier_rbf.predict(X_test)
-    with open('submission_svm.csv', 'w') as csvfile:
+    with open('submission.csv', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['id','sentiment'])
         count = 0
