@@ -9,6 +9,8 @@ from nltk.stem import PorterStemmer
 from nltk.corpus import subjectivity
 from nltk.sentiment import SentimentAnalyzer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from sklearn.ensemble import AdaBoostClassifier #For Classification
+
 
 import pandas as pd
 from sys import argv
@@ -26,23 +28,17 @@ def proproc(w):
 pipeline = Pipeline([
     #('vect', CountVectorizer()),
     ('tfidf', TfidfVectorizer()),
-    ('clf', svm.LinearSVC()),
+    ('rf',RandomForestClassifier()),
+    ('ada',AdaBoostClassifier()),
 ])
 #vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=1.0,stop_words='english',ngram_range = (1,4), strip_accents='unicode',preprocessor=proproc)
 
 parameters = {
-    #'tfidf__use_idf': (True, False),
-    #'tfidf__sublinear_tf': (True, False),
-    #'tfidf__max_df': (0.5,0.7,0.9,1.0),
-    #'tfidf__min_df': (0.1,0.3,0.5,0.7,0.9,1.0),
-    #'tfidf__norm': ('l1', 'l2'),
     #'tfidf__preprocessor': (proproc,None),
-    'tfidf__ngram_range': ((0,1),(1,2),(1,3)),#,(1,3),(1,4),(1,5),(1,6)),
-    'clf__loss': ('hinge','squared_hinge'),
-    #'clf__penalty': ('l2', 'l1'),
-    'clf__max_iter': (500,1000,2000),
-    'clf__tol': (1e-7,1e-4,1e-2,1e-9,1e-5),
-    'clf__C': (0.1,0.3,0.5,0.7,1.0),
+    'tfidf__ngram_range': ((1,1),(1,2),(1,3),(1,3),(1,4)),
+    'rf__n_estimators': (10,100,500,1000),
+    #'rf__bootstrap': (True,False),
+    'oob_score': (True,False),
 }
 
 
@@ -106,13 +102,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-# Best score: 0.943
-# Best parameters set:
-# 	clf__loss: 'squared_hinge'
-# 	clf__max_iter: 500
-# 	clf__tol: 1e-07
-# 	tfidf__max_df: 0.5
-# 	tfidf__ngram_range: (1, 2)
-# 	tfidf__norm: 'l2'
-# 	tfidf__sublinear_tf: True
-# 	tfidf__use_idf: True

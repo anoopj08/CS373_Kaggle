@@ -8,14 +8,37 @@ from sys import argv
 import csv
 import nltk
 from nltk.stem import PorterStemmer
+from nltk.tokenize import RegexpTokenizer
+import string
+
 
 
 def proproc(w):
-    w = w.lower()
-    porter = PorterStemmer()
-    w = porter.stem(w)
+    #print(w)
+    exclude = set(string.punctuation)
+    wnp = ''.join(ch for ch in w if ch.isalnum() or ch is ' ')
+    w = wnp
+    wList = w.split()
+    text = nltk.word_tokenize(w)
+    tags = (nltk.pos_tag(text))
 
-    return w
+    indices = []
+    currIndex = 0
+    for tag in tags:
+        if tag[1].find('VB') != -1:
+            indices.append(currIndex)
+        elif tag[1].find('JJ') != -1:
+            indices.append(currIndex)
+        elif tag[1].find('NN') != -1:# != -1:
+            indices.append(currIndex)
+        currIndex += 1
+
+    retSent = ""
+    for index in indices:
+        retSent += wList[index] + " "
+
+    #print(retSent)
+    return retSent
 
 def main():
     trainingFile = argv[1]
@@ -40,7 +63,7 @@ def main():
     X = X[:trainIndex]
 
     valIndex = int((trainPercentage/100) * float(len(Xval))) + trainIndex
-    #Xval = Xval[:valIndex]       #  ADD THIS LINE BACK TO ENABLE VALIDATION SET
+    Xval = Xval[:valIndex]       #  ADD THIS LINE BACK TO ENABLE VALIDATION SET
 
     Xtest = testData.as_matrix()
 
@@ -56,7 +79,7 @@ def main():
         temp = lumpy.asarray([dp[1]])
         param2.append(temp)
 
-    vectorizer = TfidfVectorizer(use_idf = True,norm = 'l2',sublinear_tf=True,stop_words='english',ngram_range = (1,2), strip_accents='unicode')#,preprocessor=proproc)
+    vectorizer = TfidfVectorizer(use_idf = True,norm = 'l2',sublinear_tf=True, max_df=0.5,stop_words='english',ngram_range = (1,2), strip_accents='unicode',preprocessor=proproc)
 
     X_train = vectorizer.fit_transform(param1)
     X_test = vectorizer.transform(param3)
@@ -64,7 +87,7 @@ def main():
     Xval_predict = vectorizer.transform(param4)
     Xval_test = param5
 
-    classifier_rbf = svm.LinearSVC()#loss = 'squared_hinge', max_iter = 500, tol = 1e-07)
+    classifier_rbf = svm.LinearSVC(loss = 'squared_hinge', max_iter = 500, tol = 1e-07)
     classifier_rbf.fit(X_train, param2)
     prediction_rbf = classifier_rbf.predict(Xval_predict)
 
@@ -77,7 +100,7 @@ def main():
     print(float(count)/float(tot))
 
     results = classifier_rbf.predict(X_test)
-    with open('submission_svm_lol2.csv', 'w') as csvfile:
+    with open('submission_svm.csv', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['id','sentiment'])
         count = 0

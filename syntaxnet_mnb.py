@@ -1,21 +1,41 @@
 import numpy as lumpy
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.naive_bayes import BernoulliNB
-from sklearn import svm
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 from sys import argv
 import csv
 import nltk
+#nltk.download('all')
 from nltk.stem import PorterStemmer
+import string
 
 
 def proproc(w):
-    w = w.lower()
-    porter = PorterStemmer()
-    w = porter.stem(w)
+    #print(w)
+    exclude = set(string.punctuation)
+    wnp = ''.join(ch for ch in w if ch.isalnum() or ch is ' ')
+    w = wnp
+    wList = w.split()
+    text = nltk.word_tokenize(w)
+    tags = (nltk.pos_tag(text))
 
-    return w
+    indices = []
+    currIndex = 0
+    for tag in tags:
+        if tag[1].find('VB') != -1:
+            indices.append(currIndex)
+        elif tag[1].find('JJ') != -1:
+            indices.append(currIndex)
+        elif tag[1].find('NN') != -1:# != -1:
+            indices.append(currIndex)
+        currIndex += 1
+
+    retSent = ""
+    for index in indices:
+        retSent += wList[index] + " "
+
+    #print(retSent)
+    return retSent
 
 def main():
     trainingFile = argv[1]
@@ -24,7 +44,7 @@ def main():
     validPercentage = float(argv[4])
 
     if int(trainPercentage) + int(validPercentage) > 100:
-        print("Percentages add up to more than 100. Please try again.")
+        print("Percentages add up to more than 100. Try again you fucker.")
         exit()
 
     trainingData = pd.read_csv(trainingFile, sep=',', quotechar='"', header=0, engine='python')
@@ -40,7 +60,7 @@ def main():
     X = X[:trainIndex]
 
     valIndex = int((trainPercentage/100) * float(len(Xval))) + trainIndex
-    #Xval = Xval[:valIndex]       #  ADD THIS LINE BACK TO ENABLE VALIDATION SET
+    Xval = Xval[:valIndex]       #  ADD THIS LINE BACK TO ENABLE VALIDATION SET
 
     Xtest = testData.as_matrix()
 
@@ -56,7 +76,9 @@ def main():
         temp = lumpy.asarray([dp[1]])
         param2.append(temp)
 
-    vectorizer = TfidfVectorizer(use_idf = True,norm = 'l2',sublinear_tf=True,stop_words='english',ngram_range = (1,2), strip_accents='unicode')#,preprocessor=proproc)
+
+
+    vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=1.0,stop_words='english',ngram_range = (1,4), strip_accents='unicode',preprocessor=proproc)
 
     X_train = vectorizer.fit_transform(param1)
     X_test = vectorizer.transform(param3)
@@ -64,20 +86,22 @@ def main():
     Xval_predict = vectorizer.transform(param4)
     Xval_test = param5
 
-    classifier_rbf = svm.LinearSVC()#loss = 'squared_hinge', max_iter = 500, tol = 1e-07)
-    classifier_rbf.fit(X_train, param2)
-    prediction_rbf = classifier_rbf.predict(Xval_predict)
+    clf = MultinomialNB(alpha=0.3, class_prior=None, fit_prior=True)
 
+    clf.fit(X_train,param2)
+
+    valResults = clf.predict(Xval_predict)
     count = 0
-    tot = len(prediction_rbf)
-    for res in range(tot):
-        if prediction_rbf[res] == Xval_test[res]:
+    tot = len(valResults)
+    for res in range(len(valResults)):
+        if valResults[res] == Xval_test[res]:
             count += 1
 
     print(float(count)/float(tot))
 
-    results = classifier_rbf.predict(X_test)
-    with open('submission_svm_lol2.csv', 'w') as csvfile:
+    results = clf.predict(X_test)
+
+    with open('submission_mnb_proproc.csv', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['id','sentiment'])
         count = 0

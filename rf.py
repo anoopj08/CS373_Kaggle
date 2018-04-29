@@ -11,9 +11,7 @@ from sklearn import svm
 #nltk.download('all')
 from nltk.stem import PorterStemmer
 from sklearn.naive_bayes import GaussianNB
-from textblob import TextBlob
-from textblob_fr import PatternTagger, PatternAnalyzer
-from textblob.sentiments import NaiveBayesAnalyzer
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree
@@ -24,7 +22,6 @@ from sklearn.ensemble import AdaBoostRegressor #For Regression
 from sklearn.ensemble import GradientBoostingClassifier #For Classification
 from sklearn.ensemble import GradientBoostingRegressor #For Regression
 from sklearn.linear_model import SGDClassifier
-from xgboost import XGBClassifier
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.ensemble import RandomForestRegressor
 #rf = RandomForestRegressor(random_state = 42)
@@ -169,8 +166,9 @@ def main():
     exit()
     """
 
-    rf = RandomForestClassifier(bootstrap = True, max_depth = 50, max_features = 'sqrt', min_samples_leaf = 2, min_samples_split = 10,  n_estimators = 200)
-    clf = AdaBoostClassifier(n_estimators=100, base_estimator=rf,learning_rate=1)
+    #rf = RandomForestClassifier(bootstrap = True, max_depth = 50, max_features = 'sqrt', min_samples_leaf = 2, min_samples_split = 10,  n_estimators = 200)
+    dt = DecisionTreeClassifier()
+    clf = AdaBoostClassifier(n_estimators=1000, base_estimator=dt,learning_rate=1.0)
 
     clf.fit(X_train, param2)
     valResults = clf.predict(Xval_predict)
@@ -226,7 +224,7 @@ def main():
     #results = clf.predict(X_test.todense())
     results = clf.predict(X_test)
 
-    with open('submission.csv', 'w') as csvfile:
+    with open('submission_randomforest.csv', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spamwriter.writerow(['id','sentiment'])
         count = 0
