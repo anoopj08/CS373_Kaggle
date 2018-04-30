@@ -89,7 +89,7 @@ def main():
 
     Xtt_train = vectorizer.fit_transform(Xtt_headlines)
 
-    clf = MultinomialNB(alpha=1.0, class_prior=None, fit_prior=True)
+    clf = svm.LinearSVC()
     clf.fit(Xtt_train,Xtt_scores)
 
     test_predictions = Xtt_2[:,0]
