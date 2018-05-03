@@ -25,24 +25,13 @@ def proproc(w):
     return w
 pipeline = Pipeline([
     #('vect', CountVectorizer()),
-    ('tfidf', TfidfVectorizer()),
+    ('tfidf', TfidfVectorizer(sublinear_tf=True, max_df=1.0,stop_words='english',ngram_range = (1,3), strip_accents='unicode')),
     ('clf', svm.LinearSVC()),
 ])
 #vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=1.0,stop_words='english',ngram_range = (1,4), strip_accents='unicode',preprocessor=proproc)
 
 parameters = {
-    #'tfidf__use_idf': (True, False),
-    #'tfidf__sublinear_tf': (True, False),
-    #'tfidf__max_df': (0.5,0.7,0.9,1.0),
-    #'tfidf__min_df': (0.1,0.3,0.5,0.7,0.9,1.0),
-    #'tfidf__norm': ('l1', 'l2'),
-    #'tfidf__preprocessor': (proproc,None),
-    'tfidf__ngram_range': ((0,1),(1,2),(1,3)),#,(1,3),(1,4),(1,5),(1,6)),
-    'clf__loss': ('hinge','squared_hinge'),
-    #'clf__penalty': ('l2', 'l1'),
-    'clf__max_iter': (500,1000,2000),
-    'clf__tol': (1e-7,1e-4,1e-2,1e-9,1e-5),
-    'clf__C': (0.1,0.3,0.5,0.7,1.0),
+    'clf__C': (0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45),
 }
 
 
@@ -62,6 +51,8 @@ def main():
         exit()
 
     trainingData = pd.read_csv(trainingFile, sep=',', quotechar='"', header=0, engine='python')
+    trainingData = trainingData.drop_duplicates(subset=['text'],keep='first')
+
     testData = pd.read_csv(testFile, sep=',', quotechar='"', header=0, engine='python')
 
     inOrder = trainingData.as_matrix()
