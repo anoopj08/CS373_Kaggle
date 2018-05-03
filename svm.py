@@ -64,7 +64,7 @@ def main():
     Xval_predict = vectorizer.transform(param4)
     Xval_test = param5
 
-    classifier_rbf = svm.LinearSVC()#loss = 'squared_hinge', max_iter = 500, tol = 1e-07)
+    classifier_rbf = svm.SVC(kernel='linear')#loss = 'squared_hinge', max_iter = 500, tol = 1e-07)
     classifier_rbf.fit(X_train, param2)
     prediction_rbf = classifier_rbf.predict(Xval_predict)
 
