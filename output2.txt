@@ -1,0 +1,4 @@
+10-fold cross validation:
+
+Accuracy: 1.00 (+/- 0.00) [Linear SVM]
+Accuracy: 0.98 (+/- 0.01) [Random Forest Classifier]
